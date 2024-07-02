@@ -1,0 +1,15 @@
+{
+    "name": "hexlet/code",
+    "type": "project",
+    "require": {
+        "slim/slim": "4.*",
+        "guzzlehttp/psr7": "^2"
+    },
+    "autoload": {
+        "files": [
+        ]
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*"
+    }
+}
