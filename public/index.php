@@ -6,12 +6,11 @@ use Slim\Views\PhpRenderer;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$app = AppFactory::create();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->safeload();
 
-//$app->get('/', function (Request $request, Response $response, $args) {
-    //$response->getBody()->write("Hello World!");
-    //return $response;
-//});
+
+$app = AppFactory::create();
 
 $app->get('/', function ($request, $response, $args) {
     $renderer = new PhpRenderer(__DIR__ . '/../templates');
