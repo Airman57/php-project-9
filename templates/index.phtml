@@ -6,6 +6,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
+<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-success">
+        <div class="mx-3 order-0">
+            <a class="navbar-brand mx-auto" href="#">Анализатор страниц</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>    
+            <div class="container-fluid">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/urls">Сайты</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
 <div class="container-lg mt-3">
                       <h1></h1>
                     <div class="row">
@@ -14,13 +35,18 @@
         <p class="lead">Бесплатно проверяйте сайты на SEO пригодность</p>
         <form action="/urls" method="post" class="row" required="">
             <div class="col-8">
-            <label for="text" class="visually-hidden">Url для проверки</label>
-            <input type="text" name="url[name]" value="" class="form-control form-control-lg" placeholder="https://www.example.com">
-                        </div>
-            <div class="col-2">
-                <input type="submit" class="btn btn-primary btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">
+            <label for="text" class="visually-hidden">Url для проверки</label>            
+            <?php if (empty($errors)): ?>
+                            <input type="text" name="url[name]" class="form-control form-control-lg" id="floatingInputValue" placeholder="https://www.example.com">
+                        <?php endif; ?>
+                        <?php if (!empty($errors)): ?>
+                            <input type="text" name="url[name]" value="" class="form-control form-control-lg is-invalid" id="floatingInputValue" placeholder="https://www.example.com">
+                            <div class="invalid-feedback"> <?= $errors ?></div>
+                        <?php endif; ?>
+                            </div>
+                        <div class="col-2">
+                <input type="submit" class="btn btn-success btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">
             </div>
-
         </form>
 
     </div>
