@@ -35,6 +35,7 @@
       <th scope="col">id</th>
       <th scope="col">URL</th>
       <th scope="col">Последняя проверка</th>
+      <th scope="col">Код ответа</th>
     </tr>
   </thead>
   <tbody>
@@ -42,7 +43,8 @@
     <tr>
       <th scope="row"><?= $data['id'] ?></th>
       <td><a href="/urls/<?= $data['id'] ?>"><?= $data['name'] ?> </a></td>
-      <td><?= $data['last'] ?></td>      
+      <td><?= $data['last'] ?></td> 
+      <td><?= $data['code'] ?></td>       
     </tr>    
   </tbody>
   <?php endforeach ?>
