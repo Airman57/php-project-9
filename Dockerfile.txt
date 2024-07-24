@@ -8,9 +8,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
 
+COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
+
 WORKDIR /app
 
-COPY . /app
+COPY .
 
 RUN composer install
 
