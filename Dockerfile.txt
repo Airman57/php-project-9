@@ -10,7 +10,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 
 WORKDIR /app
 
-COPY /var/www/docker/project /app
+COPY . /app
 
 RUN composer install
 
