@@ -69,6 +69,11 @@
                 <input type="submit" class="btn btn-success btn-lg ms-3 px-5 text-uppercase mx-3" value="Проверить">
             </div>
 </caption>
+    <div>
+        <?php if(!empty($errMessage)): ?>
+        <p style="color:red;"> <?= $errMessage ?> </p>
+        <?php endif ?>
+        </div>
 
     <thead>
     <tr>
