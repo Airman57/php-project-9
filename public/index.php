@@ -143,7 +143,7 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
         //return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
         return $this->get('renderer')->render($response
                                              ->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301),
-                                             'showUrl',
+                                             'showUrl.phtml',
                                              $params);
     }
 
