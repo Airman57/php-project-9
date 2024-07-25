@@ -140,8 +140,8 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
              ->addMessage('warning', 'при выполнении проверки могли произойти ошибки, проверьте результаты');
     }
 
-    $code = $check->getStatusCode();
-    $html = $check->getBody()->getContents();
+    $code = optional($check)->getStatusCode();
+    $html = optional($check)->getBody()->getContents();
     $doc = new Document($html);
     $h1 = optional($doc->first('h1'))->text();
     $title = optional($doc->first('title'))->text();
