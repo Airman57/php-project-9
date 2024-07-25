@@ -138,6 +138,7 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
         $check = $e->getResponse();
         $this->get('flash')
              ->addMessage('warning', 'при выполнении проверки могли произойти ошибки, проверьте результаты');
+        return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
     }
 
     $code = optional($check)->getStatusCode();
