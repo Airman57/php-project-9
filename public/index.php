@@ -136,9 +136,15 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
         return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
     } catch (RequestException $e) {
         $check = $e->getResponse();
+        $errorMess = 'При проверке данного сайта возникла ошибка. Возможно для нашего ip адреса ограничен доступ.';
+        $params = ['errorMess' => $errorMess];
         $this->get('flash')
              ->addMessage('warning', 'при выполнении проверки могли произойти ошибки, проверьте результаты');
-        return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
+        //return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
+        return $this->get('renderer')->render($response
+                                             ->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301),
+                                             'showUrl',
+                                             $params);
     }
 
     $code = optional($check)->getStatusCode();
