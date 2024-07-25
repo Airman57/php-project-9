@@ -9,7 +9,6 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Views\PhpRenderer;
 use Carbon\Carbon;
 use DI\Container;
-use Illuminate\Support\Arr;
 use App\Validator;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -79,7 +78,6 @@ $app->post('/urls', function ($request, $response) use ($router) {
     $name = strtolower($url['name']);
     $parsedUrl = parse_url($name);
     $urlData = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
-    //dump($urlData);
     $stm = $this->get('pdo')->prepare('SELECT * FROM urls WHERE name = :name');
     $stm->bindParam(':name', $name, PDO::PARAM_STR);
     $stm->execute();
@@ -145,9 +143,9 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     $code = $check->getStatusCode();
     $html = $check->getBody()->getContents();
     $doc = new Document($html);
-    $h1 = $doc->first('h1')->text();
-    $title = $doc->first('title')->text();
-    $content = $doc->first('meta[name=description]')->getAttribute('content');
+    $h1 = optional($doc->first('h1'))->text();
+    $title = optional($doc->first('title'))->text();
+    $content = optional($doc->first('meta[name=description]'))->getAttribute('content');
     $nowTime = Carbon::now()->toDateTimeString();
 
     $urlChecks = $this->get('pdo')
