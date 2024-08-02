@@ -13,7 +13,6 @@
         "slim/flash": "^0.4.0",
         "selective/basepath": "^2.2",
         "nesbot/carbon": "^3.6",
-        "tightenco/collect": "^9.52",
         "guzzlehttp/guzzle": "^7.0",
         "imangazaliev/didom": "^2.0",
         "illuminate/support": "^11.17"
