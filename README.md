@@ -9,3 +9,17 @@
 
 #### Проверить работу после дней версии сайта можно по адресу:
 https://php-project-9-7y0y.onrender.com
+
+## Requirements
+
+* Make utilite
+* PHP >= 8.3
+* Composer >= 2.4.1
+
+## Install
+
+For start project locally: 
+* clone repo
+* make install
+* make start
+* open http://localhost:8000 at browser 

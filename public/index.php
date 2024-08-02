@@ -130,7 +130,7 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     $client = new Client(['timeout'  => 3.0]);
     try {
         $check = $client->get($sth[0]['name']);
-        $this->get('flash')->addMessage('success', 'Страница проверена');
+        $this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (ConnectException $e) {
         $this->get('flash')->addMessage('error', 'Неизвестная ошибка, не удалось подключиться');
         return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
