@@ -10,7 +10,7 @@ class Validator
         if ($url['name'] === "") {
             $errors = 'Url не может быть пустым';            
         } elseif (!filter_var($url['name'], FILTER_VALIDATE_URL)) {
-            $errors = 'Некорректный  url';
+            $errors = 'Некорректный URL';
         } 
         return $errors;
     }
