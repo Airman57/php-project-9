@@ -18,9 +18,6 @@ jobs:
     - name: install
       run: make install
 
-    - name: update
-      run: composer update
-
     - name: linter
       run: make lint
       
