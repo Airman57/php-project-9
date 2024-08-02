@@ -4,4 +4,5 @@ start:
 lint:
 	composer exec --verbose phpcs -- --standard=PSR12 public/index.php
 install:
-    composer install
+	composer install
+	
