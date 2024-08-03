@@ -43,7 +43,7 @@
                             <div class="invalid-feedback"> <?= $errors['empty'] ?></div>
                                 <?php elseif(!empty($errors['wrongUrl'])): ?>
                                     <input type="text" name="url[name]" value="<?= $url['name'] ?>" class="form-control form-control-lg is-invalid" id="floatingInputValue" placeholder="https://www.example.com">
-                            <div class="invalid-feedback"> <?= $errors['wrongUrl'] ?></div>
+                            <div class="invalid-feedback"> Некорректный URL </div>
                         <?php endif; ?>
                             </div>
                         <div class="col-2">
