@@ -9,7 +9,7 @@ class Validator
         $errors = [];
         if ($url['name'] === "") {
             $errors = ['empty' => 'Url не может быть пустым'];            
-        } elseif (!filter_var($url['name'], FILTER_VALIDATE_URL)) {
+        } elseif (!preg_match("/^(https?:\/\/+[\w\-]+\.[\w\-]+)/i",$url['name'])){
             $errors = ['wrongUrl' => 'Некорректный URL'];
         } 
         return $errors;
