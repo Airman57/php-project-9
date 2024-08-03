@@ -102,7 +102,8 @@ $app->get('/urls', function ($request, $response) {
                                      FROM urls
                                      LEFT JOIN url_checks
                                      ON urls.id = url_checks.url_id
-                                     GROUP BY urls.id, code;
+                                     GROUP BY urls.id, code
+                                     ORDER BY last DESC NULLS LAST;
                           ")->fetchAll();
     $urlsData = collect($sth)->toArray();
     $params = ['urlsData' => $urlsData];
@@ -111,12 +112,15 @@ $app->get('/urls', function ($request, $response) {
 
 $app->get('/urls/{id}', function ($request, $response, $args) {
     $urlId = $args['id'];
-    $url = $this->get('pdo')->query("SELECT * FROM urls WHERE id = $urlId")->fetchAll();
-    if ($url === null) {
+
+    try {    
+        $url = $this->get('pdo')->query("SELECT * FROM urls WHERE id = $urlId")->fetchAll();
+    } catch (PDOException $e) {
         return $response->withStatus(404)
                         ->withHeader('Content-Type', 'text/html')
                         ->write('Url not found (:');
-    }
+    }   
+     
     $checkedUrl = $this->get('pdo')->query("SELECT * FROM url_checks WHERE url_id = $urlId")->fetchAll();
     $messages = $this->get('flash')->getMessages();
     $params = ['url' => $url,
@@ -146,9 +150,11 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     $code = optional($check)->getStatusCode();
     $html = optional($check)->getBody()->getContents();
     $doc = new Document($html);
-    $h1 = optional($doc->first('h1'))->text();
-    $title = optional($doc->first('title'))->text();
-    $content = optional($doc->first('meta[name=description]'))->getAttribute('content');
+    $h1Data = optional($doc->first('h1'))->text();
+    $h1 = substr($h1Data, 0, 255);
+    $title = optional($doc->first('title'))->text();    
+    $contentData = optional($doc->first('meta[name=description]'))->getAttribute('content');
+    $content = substr($contentData, 0, 255);
     $nowTime = Carbon::now()->toDateTimeString();
 
     $urlChecks = $this->get('pdo')
