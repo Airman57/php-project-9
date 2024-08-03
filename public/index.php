@@ -15,6 +15,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ClientException;
 use DiDom\Document;
+use Illuminate\support\helpers\dump;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -113,14 +114,13 @@ $app->get('/urls', function ($request, $response) {
 $app->get('/urls/{id}', function ($request, $response, $args) {
     $urlId = $args['id'];
 
-    try {    
+    try {
         $url = $this->get('pdo')->query("SELECT * FROM urls WHERE id = $urlId")->fetchAll();
     } catch (PDOException $e) {
         return $response->withStatus(404)
                         ->withHeader('Content-Type', 'text/html')
                         ->write('Url not found (:');
-    }   
-     
+    }
     $checkedUrl = $this->get('pdo')->query("SELECT * FROM url_checks WHERE url_id = $urlId")->fetchAll();
     $messages = $this->get('flash')->getMessages();
     $params = ['url' => $url,
@@ -151,10 +151,10 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     $html = optional($check)->getBody()->getContents();
     $doc = new Document($html);
     $h1Data = optional($doc->first('h1'))->text();
-    $h1 = substr($h1Data, 0, 255);
-    $title = optional($doc->first('title'))->text();    
+    $h1 = mb_substr($h1Data, 0, 255);
+    $title = optional($doc->first('title'))->text();
     $contentData = optional($doc->first('meta[name=description]'))->getAttribute('content');
-    $content = substr($contentData, 0, 255);
+    $content = mb_substr($contentData, 0, 255);
     $nowTime = Carbon::now()->toDateTimeString();
 
     $urlChecks = $this->get('pdo')

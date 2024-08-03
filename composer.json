@@ -25,7 +25,8 @@
         ]
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "symfony/var-dumper": "^7.1"
     },
     "config": {
         "platform": {
