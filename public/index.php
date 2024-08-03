@@ -70,7 +70,8 @@ $app->post('/urls', function ($request, $response) use ($router) {
     $errors = $validator->validate($url);
 
     if (!empty($errors)) {
-        $params = ['errors' => $errors];
+        $params = ['errors' => $errors,
+                   'url' => $url];
         return $this->get('renderer')->render($response->withStatus(422), "index.phtml", $params);
     }
 

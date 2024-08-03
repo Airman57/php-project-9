@@ -38,9 +38,12 @@
             <?php if (empty($errors)): ?>
                             <input type="text" name="url[name]" class="form-control form-control-lg" id="floatingInputValue" placeholder="https://www.example.com">
                         <?php endif; ?>
-                        <?php if (!empty($errors)): ?>
+                        <?php if (!empty($errors['empty'])): ?>
                             <input type="text" name="url[name]" value="" class="form-control form-control-lg is-invalid" id="floatingInputValue" placeholder="https://www.example.com">
-                            <div class="invalid-feedback"> <?= $errors ?></div>
+                            <div class="invalid-feedback"> <?= $errors['empty'] ?></div>
+                                <?php elseif(!empty($errors['wrongUrl'])): ?>
+                                    <input type="text" name="url[name]" value="<?= $url['name'] ?>" class="form-control form-control-lg is-invalid" id="floatingInputValue" placeholder="https://www.example.com">
+                            <div class="invalid-feedback"> <?= $errors['wrongUrl'] ?></div>
                         <?php endif; ?>
                             </div>
                         <div class="col-2">

@@ -6,11 +6,11 @@ class Validator
 {
     public function validate(array $url)
     {
-        $errors = '';
+        $errors = [];
         if ($url['name'] === "") {
-            $errors = 'Url не может быть пустым';            
+            $errors = ['empty' => 'Url не может быть пустым'];            
         } elseif (!filter_var($url['name'], FILTER_VALIDATE_URL)) {
-            $errors = 'Некорректный URL';
+            $errors = ['wrongUrl' => 'Некорректный URL'];
         } 
         return $errors;
     }
