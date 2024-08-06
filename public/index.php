@@ -121,7 +121,10 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
                         ->withHeader('Content-Type', 'text/html')
                         ->write('Url not found (:');
     }
-    $checkedUrl = $this->get('pdo')->query("SELECT * FROM url_checks WHERE url_id = $urlId ORDER BY created_at DESC")->fetchAll();
+    $checkedUrl = $this->get('pdo')->query("SELECT * FROM url_checks 
+                                            WHERE url_id = $urlId 
+                                            ORDER BY created_at DESC")
+                                    ->fetchAll();
     $messages = $this->get('flash')->getMessages();
     $params = ['url' => $url,
                'flash' => $messages,
