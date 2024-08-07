@@ -15,7 +15,6 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ClientException;
 use DiDom\Document;
-use Illuminate\support\helpers\dump;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -98,7 +97,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
 });
 
 $app->get('/urls', function ($request, $response) {
-    $sth = $this->get('pdo')->query("SELECT urls.id, urls.name, url_checks.status_code as code, 
+    $urlsData = $this->get('pdo')->query("SELECT urls.id, urls.name, url_checks.status_code as code, 
                                      max(url_checks.created_at) as last
                                      FROM urls
                                      LEFT JOIN url_checks
@@ -106,7 +105,7 @@ $app->get('/urls', function ($request, $response) {
                                      GROUP BY urls.id, code
                                      ORDER BY last DESC NULLS LAST;
                           ")->fetchAll();
-    $urlsData = collect($sth)->toArray();
+    //$urlsData = collect($sth)->toArray();
     $params = ['urlsData' => $urlsData];
     return $this->get('renderer')->render($response, "urls.phtml", $params);
 })->setName('urlsData');
