@@ -155,7 +155,7 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     $doc = new Document($html);
     $h1Data = optional($doc->first('h1'))->text();
     if ($h1Data === null) {
-        $h1 = '';    
+        $h1 = '';
     } else {
         $h1 = mb_substr($h1Data, 0, 255);
     }
