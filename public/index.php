@@ -55,6 +55,7 @@ $container->set('pdo', function () {
 });
 
 $app = AppFactory::create();
+$app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
 $app->get('/', function ($request, $response) {
@@ -153,7 +154,11 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     $html = optional($check)->getBody()->getContents();
     $doc = new Document($html);
     $h1Data = optional($doc->first('h1'))->text();
-    $h1 = mb_substr($h1Data, 0, 255);
+    if ($h1Data === null) {
+        $h1 = '';    
+    } else {
+        $h1 = mb_substr($h1Data, 0, 255);
+    }
     $title = optional($doc->first('title'))->text();
     $contentData = optional($doc->first('meta[name=description]'))->getAttribute('content');
     $content = mb_substr($contentData, 0, 255);

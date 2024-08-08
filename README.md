@@ -18,7 +18,7 @@ https://php-project-9-7y0y.onrender.com
 
 ## Install
 
-For start project locally: 
+### Для локального старта проекта:
 * clone repo
 * make install
 * make start
