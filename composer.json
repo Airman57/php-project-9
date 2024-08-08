@@ -12,10 +12,10 @@
         "slim/http": "^1.4",
         "slim/flash": "^0.4.0",
         "selective/basepath": "^2.2",
-        "nesbot/carbon": "^3.6",
+        "nesbot/carbon": "2.72.5",
         "guzzlehttp/guzzle": "^7.0",
         "imangazaliev/didom": "^2.0",
-        "illuminate/support": "^11.20"
+        "illuminate/support": "9.52.16"
     },
     "autoload": {
         "psr-4": {
