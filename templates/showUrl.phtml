@@ -27,16 +27,19 @@
             </ul>
         </div>
     </div>
-    </nav>  
+    </nav> 
     <?php if (!empty($flash)): ?>
-        <div class="alert alert-success" role="alert">
-        <?php foreach($flash as $message): ?>
-            <?php foreach($message as $string): ?>
-            <?= $string ?>
-            <?php endforeach ?>
-            <?php endforeach ?>
-  </div>
+        <?php foreach ($flash as $alert => $message): ?>    
+            <?php if ($alert === 'error' || $alert === 'warning'): ?>
+            <div class="alert alert-danger" role="alert">
+            <?= $message[0] ?>
             </div>
+            <?php elseif ($alert === 'success'): ?>                
+                <div class="alert alert-success" role="alert">
+                <?= $message[0] ?>
+            </div>
+            <?php endif ?>
+            <?php endforeach ?>
     <?php endif ?>
     </header>
     <main class="flex-grow-1">

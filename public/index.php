@@ -15,6 +15,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ClientException;
 use DiDom\Document;
+use Illuminate\Support\Str;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -77,7 +78,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
     }
 
     //проверка на нахождение в базе
-    $name = strtolower($url['name']);
+    $name = mb_strtolower($url['name']);
     $parsedUrl = parse_url($name);
     $urlData = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
     $stm = $this->get('pdo')->prepare('SELECT * FROM urls WHERE name = :name');
@@ -86,16 +87,16 @@ $app->post('/urls', function ($request, $response) use ($router) {
     $urlExists = $stm->fetchColumn();
     if ($urlExists) {
         $this->get('flash')->addMessage('success', 'Страница уже существует');
-        return $response->withRedirect($router->urlFor('showUrl', ['id' => $urlExists]), 301);
+        return $response->withRedirect($router->urlFor('url.show', ['id' => $urlExists]), 301);
     } else {
     // добавление в базу
         $sth = $this->get('pdo')->prepare('INSERT INTO urls (name, created_at) VALUES (?,?)');
         $sth->execute([$name, Carbon::now()->toDateTimeString()]);
         $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
         $id = $this->get('pdo')->lastInsertId();
-        return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
+        return $response->withRedirect($router->urlFor('url.show', ['id' => $id]), 301);
     }
-});
+})->setName('urls.store');
 
 $app->get('/urls', function ($request, $response) {
     $urlsData = $this->get('pdo')->query("SELECT urls.id, urls.name, url_checks.status_code as code, 
@@ -106,16 +107,20 @@ $app->get('/urls', function ($request, $response) {
                                      GROUP BY urls.id, code
                                      ORDER BY last DESC NULLS LAST;
                           ")->fetchAll();
-    //$urlsData = collect($sth)->toArray();
     $params = ['urlsData' => $urlsData];
     return $this->get('renderer')->render($response, "urls.phtml", $params);
-})->setName('urlsData');
+})->setName('urls.index');
 
-$app->get('/urls/{id}', function ($request, $response, $args) {
+$app->get('/urls/{id:[0-9]+}', function ($request, $response, $args) {
     $urlId = $args['id'];
 
     try {
         $url = $this->get('pdo')->query("SELECT * FROM urls WHERE id = $urlId")->fetchAll();
+        if (empty($url)) {
+            return $response->withStatus(404)
+                        ->withHeader('Content-Type', 'text/html')
+                        ->write('Url not found (:');
+        }
     } catch (PDOException $e) {
         return $response->withStatus(404)
                         ->withHeader('Content-Type', 'text/html')
@@ -130,7 +135,7 @@ $app->get('/urls/{id}', function ($request, $response, $args) {
                'flash' => $messages,
                'checkedUrl' => $checkedUrl];
     return $this->get('renderer')->render($response, 'showUrl.phtml', $params);
-})->setName('showUrl');
+})->setName('url.show');
 
 $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($router) {
     $id = $args['id'];
@@ -141,13 +146,32 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
         $this->get('flash')->addMessage('success', 'Страница успешно проверена');
     } catch (ConnectException $e) {
         $this->get('flash')->addMessage('error', 'Неизвестная ошибка, не удалось подключиться');
-        return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
+        return $response->withRedirect($router->urlFor('url.show', ['id' => $id]), 301);
     } catch (RequestException $e) {
         $check = $e->getResponse();
+        $code = optional($check)->getStatusCode();
+        $html = optional($check)->getBody()->getContents();
+        $doc = new Document($html);
+        $h1Data = optional($doc->first('h1'))->text();
+        if ($h1Data === null) {
+            $h1 = '';
+        } else {
+            $h1 = Str::limit($h1Data, 252, '...');
+        }
+        $title = optional($doc->first('title'))->text();
+        $contentData = optional($doc->first('meta[name=description]'))->getAttribute('content');
+        $content = Str::limit($contentData, 252, '...');
+        $nowTime = Carbon::now()->toDateTimeString();
+
+        $urlChecks = $this->get('pdo')
+                        ->prepare(query:'INSERT INTO url_checks 
+                                        (url_id, status_code, h1, title, description, created_at) 
+                                        VALUES (?,?,?,?,?,?)');
+        $urlChecks->execute([$id, $code, $h1, $title, $content, $nowTime]);
         $this->get('flash')
              ->addMessage('warning', 'При выполнении запроса пришел неоднозначный ответ.
                                       Возможно для нашего ip-адреса проверка заблокирована');
-        return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
+        return $response->withRedirect($router->urlFor('url.show', ['id' => $id]), 301);
     }
 
     $code = optional($check)->getStatusCode();
@@ -157,18 +181,18 @@ $app->post('/urls/{id}/checks', function ($request, $response, $args) use ($rout
     if ($h1Data === null) {
         $h1 = '';
     } else {
-        $h1 = mb_substr($h1Data, 0, 255);
+        $h1 = Str::limit($h1Data, 252, '...');
     }
     $title = optional($doc->first('title'))->text();
     $contentData = optional($doc->first('meta[name=description]'))->getAttribute('content');
-    $content = mb_substr($contentData, 0, 255);
+    $content = Str::limit($contentData, 252, '...');
     $nowTime = Carbon::now()->toDateTimeString();
 
     $urlChecks = $this->get('pdo')
                       ->prepare(query:'INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) 
                                         VALUES (?,?,?,?,?,?)');
     $urlChecks->execute([$id, $code, $h1, $title, $content, $nowTime]);
-    return $response->withRedirect($router->urlFor('showUrl', ['id' => $id]), 301);
-});
+    return $response->withRedirect($router->urlFor('url.show', ['id' => $id]), 301);
+})->setName('urls.check');
 
 $app->run();
