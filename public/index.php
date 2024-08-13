@@ -111,7 +111,7 @@ $app->get('/urls', function ($request, $response) {
     return $this->get('renderer')->render($response, "urls.phtml", $params);
 })->setName('urls.index');
 
-$app->get('/urls/{id:[0-9]+}', function ($request, $response, $args) {
+$app->get('/urls/{id}', function ($request, $response, $args) {
     $urlId = $args['id'];
 
     try {
