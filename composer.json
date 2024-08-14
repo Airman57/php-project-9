@@ -15,7 +15,8 @@
         "nesbot/carbon": "2.72.5",
         "guzzlehttp/guzzle": "^7.0",
         "imangazaliev/didom": "^2.0",
-        "illuminate/support": "9.52.16"
+        "illuminate/support": "9.52.16",
+        "monolog/monolog": "^3.7"
     },
     "autoload": {
         "psr-4": {

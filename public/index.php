@@ -58,12 +58,11 @@ $container->set('pdo', function () {
 $app = AppFactory::create();
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
+$router = $app->getRouteCollector()->getRouteParser();
 
 $app->get('/', function ($request, $response) {
     return $this->get('renderer')->render($response, "index.phtml");
 })->setName('main');
-
-$router = $app->getRouteCollector()->getRouteParser();
 
 $app->post('/urls', function ($request, $response) use ($router) {
     //валидация url
@@ -99,19 +98,20 @@ $app->post('/urls', function ($request, $response) use ($router) {
 })->setName('urls.store');
 
 $app->get('/urls', function ($request, $response) {
-    $urlsData = $this->get('pdo')->query("SELECT urls.id, urls.name, url_checks.status_code as code, 
-                                     max(url_checks.created_at) as last
-                                     FROM urls
-                                     LEFT JOIN url_checks
-                                     ON urls.id = url_checks.url_id
-                                     GROUP BY urls.id, code
-                                     ORDER BY last DESC NULLS LAST;
-                          ")->fetchAll();
+    $urlsCheckData = $this->get('pdo')->query("SELECT DISTINCT ON (url_id) url_id, created_at, status_code as code
+                                               FROM url_checks
+                                               ORDER BY url_id, created_at DESC;")->fetchAll();
+    $urlKeys = collect((array) $urlsCheckData)->keyBy('url_id')->keys()->toArray();
+    $in = implode(',', $urlKeys);
+    $urlNames = $this->get('pdo')->query("SELECT name FROM urls
+                                          WHERE id IN ($in)
+                                          ORDER BY id")->fetchAll();
+    $urlsData = array_map('array_merge', $urlsCheckData, $urlNames);
     $params = ['urlsData' => $urlsData];
     return $this->get('renderer')->render($response, "urls.phtml", $params);
 })->setName('urls.index');
 
-$app->get('/urls/{id}', function ($request, $response, $args) {
+$app->get('/urls/{id:[0-9]+}', function ($request, $response, $args) {
     $urlId = $args['id'];
 
     try {

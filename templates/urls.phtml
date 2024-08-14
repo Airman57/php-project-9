@@ -44,9 +44,9 @@
   <tbody>
   <?php foreach ($urlsData as $data): ?> 
     <tr>
-      <th scope="row"><?= $data['id'] ?></th>
-      <td><a href="/urls/<?= $data['id'] ?>"><?= $data['name'] ?> </a></td>
-      <td><?= $data['last'] ?></td> 
+      <th scope="row"><?= $data['url_id'] ?></th>
+      <td><a href="/urls/<?= $data['url_id'] ?>"><?= $data['name'] ?> </a></td>
+      <td><?= $data['created_at'] ?></td> 
       <td><?= $data['code'] ?></td>       
     </tr>    
   </tbody>
