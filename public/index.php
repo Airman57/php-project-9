@@ -71,8 +71,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
     $errors = $validator->validate($url);
 
     if (!empty($errors)) {
-        $params = ['errors' => $errors,
-                   'url' => $url];
+        $params = ['errors' => $errors, 'url' => $url];
         return $this->get('renderer')->render($response->withStatus(422), "index.phtml", $params);
     }
 
@@ -81,7 +80,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
     $parsedUrl = parse_url($name);
     $urlData = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
     $stm = $this->get('pdo')->prepare('SELECT * FROM urls WHERE name = :name');
-    $stm->bindParam(':name', $name, PDO::PARAM_STR);
+    $stm->bindParam(':name', $urlData, PDO::PARAM_STR);
     $stm->execute();
     $urlExists = $stm->fetchColumn();
     if ($urlExists) {
@@ -90,7 +89,7 @@ $app->post('/urls', function ($request, $response) use ($router) {
     } else {
     // добавление в базу
         $sth = $this->get('pdo')->prepare('INSERT INTO urls (name, created_at) VALUES (?,?)');
-        $sth->execute([$name, Carbon::now()->toDateTimeString()]);
+        $sth->execute([$urlData, Carbon::now()->toDateTimeString()]);
         $this->get('flash')->addMessage('success', 'Страница успешно добавлена');
         $id = $this->get('pdo')->lastInsertId();
         return $response->withRedirect($router->urlFor('url.show', ['id' => $id]), 301);
