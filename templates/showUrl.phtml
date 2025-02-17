@@ -63,16 +63,14 @@
 </table>
 </div>
 
-<h2 class="mt-5 mb-3 px-3">Проверки</h2>
-
-<div class="table-responsive container">
-    <table class="table table-success table-hover caption-top table-sm table-bordered" data-test="checks">
-    <caption>
-    <form action="/urls/<?= $url[0]['id'] ?>/checks" method="post" class="row" required="">
-    <div class="col-6">
+<h2 class="mt-5 mb-3 px-1">Проверки</h2>
+<form action="/urls/<?= $url[0]['id'] ?>/checks" method="post" class="row" required="">
+    <div class="px-3">
                 <input type="submit" class="btn btn-success" value="Запустить проверку">
             </div>
-</caption>
+
+<div class="table-responsive container mt-5">
+    <table class="table table-success table-hover caption-top table-sm table-bordered" data-test="checks">
     <thead>
     <tr>
       <th scope="col">id</th>      
